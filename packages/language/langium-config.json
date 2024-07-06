@@ -1,0 +1,15 @@
+{
+    "projectName": "Snakeskin",
+    "languages": [{
+        "id": "snakeskin",
+        "grammar": "src/snakeskin.langium",
+        "fileExtensions": [".ss"],
+        "textMate": {
+            "out": "syntaxes/snakeskin.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "src/syntaxes/snakeskin.monarch.ts"
+        }
+    }],
+    "out": "src/generated"
+}
