@@ -20,11 +20,12 @@ export class SemanticTokenProvider extends AbstractSemanticTokenProvider {
 				property: 'key',
 				type: SemanticTokenTypes.property,
 			});
-			acceptor({
-				node,
-				property: 'value',
-				type: SemanticTokenTypes.string,
-			});
+			// Disabled temporarily until I figure out a way to reuse the JavaScript syntax highlighter
+			// acceptor({
+			// 	node,
+			// 	property: 'value',
+			// 	type: SemanticTokenTypes.string,
+			// });
 		} else if (isClass(node)) {
 			acceptor({
 				node,
