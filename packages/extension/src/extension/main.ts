@@ -34,7 +34,18 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
 
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'snakeskin' }]
+        documentSelector: [{ scheme: 'file', language: 'snakeskin' }],
+        middleware: {
+            handleDiagnostics(uri, diagnostics, next) {
+                const messagesToSuppress = [
+                    'Expecting end of file but found `DEDENT`.',
+                    "Expecting token of type 'EOF' but found `DEDENT`.",
+                    "Expecting token of type 'DEDENT' but found ``.",
+                ]
+                const filteredDiagnostics = diagnostics.filter(diagnostic => !messagesToSuppress.includes(diagnostic.message));
+                return next(uri, filteredDiagnostics);
+            },
+        }
     };
 
     // Create the language client and start the client.
