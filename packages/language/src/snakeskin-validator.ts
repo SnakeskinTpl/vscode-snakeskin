@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { SnakeskinAstType, Person } from './generated/ast.js';
+import type { SnakeskinAstType, Module } from './generated/ast.js';
 import type { SnakeskinServices } from './snakeskin-module.js';
 
 /**
@@ -9,7 +9,7 @@ export function registerValidationChecks(services: SnakeskinServices) {
     const registry = services.validation.ValidationRegistry;
     const validator = services.validation.SnakeskinValidator;
     const checks: ValidationChecks<SnakeskinAstType> = {
-        Person: validator.checkPersonStartsWithCapital
+        Module: validator.validateModule,
     };
     registry.register(checks, validator);
 }
@@ -19,13 +19,7 @@ export function registerValidationChecks(services: SnakeskinServices) {
  */
 export class SnakeskinValidator {
 
-    checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {
-        if (person.name) {
-            const firstChar = person.name.substring(0, 1);
-            if (firstChar.toUpperCase() !== firstChar) {
-                accept('warning', 'Person name should start with a capital.', { node: person, property: 'name' });
-            }
-        }
+    validateModule(module: Module, accept: ValidationAcceptor): void {
     }
 
 }
