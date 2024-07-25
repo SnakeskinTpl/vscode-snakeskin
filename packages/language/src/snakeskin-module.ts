@@ -4,6 +4,7 @@ import { SnakeskinGeneratedModule, SnakeskinGeneratedSharedModule } from './gene
 import { SnakeskinValidator, registerValidationChecks } from './snakeskin-validator.js';
 import { SnakeskinTokenBuilder, SnakeskinLexer } from './parser/snakeskin-lexer.js';
 import { SemanticTokenProvider } from './semantic-tokens.js';
+import { HoverProvider } from './hover-provider.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -34,7 +35,8 @@ export const SnakeskinModule: Module<SnakeskinServices, PartialLangiumServices &
         SnakeskinValidator: () => new SnakeskinValidator(),
     },
     lsp: {
-        SemanticTokenProvider: (injector) => new SemanticTokenProvider(injector)
+        SemanticTokenProvider: (services) => new SemanticTokenProvider(services),
+        HoverProvider: (services) => new HoverProvider(services),
     }
 };
 
