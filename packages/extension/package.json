@@ -14,7 +14,11 @@
             "id": "snakeskin",
             "aliases": ["Snakeskin", "snakeskin"],
             "extensions": [".ss"],
-            "configuration": "./language-configuration.json"
+            "configuration": "./language-configuration.json",
+            "icon": {
+                "light": "./images/snakeskin-logo.png",
+                "dark": "./images/snakeskin-logo.png"
+            }
         }],
         "grammars": [{
             "language": "snakeskin",
