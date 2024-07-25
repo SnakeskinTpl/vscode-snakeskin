@@ -3,6 +3,7 @@ import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModul
 import { SnakeskinGeneratedModule, SnakeskinGeneratedSharedModule } from './generated/module.js';
 import { SnakeskinValidator, registerValidationChecks } from './snakeskin-validator.js';
 import { SnakeskinTokenBuilder, SnakeskinLexer } from './parser/snakeskin-lexer.js';
+import { SemanticTokenProvider } from './semantic-tokens.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -30,7 +31,10 @@ export const SnakeskinModule: Module<SnakeskinServices, PartialLangiumServices &
         Lexer: (services) => new SnakeskinLexer(services),
     },
     validation: {
-        SnakeskinValidator: () => new SnakeskinValidator()
+        SnakeskinValidator: () => new SnakeskinValidator(),
+    },
+    lsp: {
+        SemanticTokenProvider: (injector) => new SemanticTokenProvider(injector)
     }
 };
 
