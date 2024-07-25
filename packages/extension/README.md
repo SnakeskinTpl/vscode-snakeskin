@@ -10,4 +10,4 @@ It is not yet ready for public use.
 ## Supported features
 
 - Semantic highlighting
-- Hover information for native HTML elements/attributes
+- Hover information for native HTML and Vue elements/attributes
