@@ -1,8 +1,11 @@
 {
-    "name": "snakeskin-extension",
-    "description": "The extension specific package",
+    "name": "snakeskin",
+    "description": "Language support for Snakeskin",
     "version": "0.0.1",
-    "displayName": "snakeskin",
+    "displayName": "Snakeskin",
+    "repository": "https://github.com/SnakeskinTpl/vscode-snakeskin/",
+    "publisher": "SnakeskinTpl",
+    "icon": "./images/snakeskin-logo.png",
     "engines": {
         "vscode": "^1.67.0"
     },
