@@ -2,6 +2,7 @@ import { type Module, inject } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModuleContext, type LangiumServices, type LangiumSharedServices, type PartialLangiumServices } from 'langium/lsp';
 import { SnakeskinGeneratedModule, SnakeskinGeneratedSharedModule } from './generated/module.js';
 import { SnakeskinValidator, registerValidationChecks } from './snakeskin-validator.js';
+import { SnakeskinTokenBuilder, SnakeskinLexer } from './parser/snakeskin-lexer.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -24,6 +25,10 @@ export type SnakeskinServices = LangiumServices & SnakeskinAddedServices
  * selected services, while the custom services must be fully specified.
  */
 export const SnakeskinModule: Module<SnakeskinServices, PartialLangiumServices & SnakeskinAddedServices> = {
+    parser: {
+        TokenBuilder: () => new SnakeskinTokenBuilder(),
+        Lexer: (services) => new SnakeskinLexer(services),
+    },
     validation: {
         SnakeskinValidator: () => new SnakeskinValidator()
     }
