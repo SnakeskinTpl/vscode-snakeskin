@@ -1,12 +1,29 @@
-import type { IMultiModeLexerDefinition, TokenType, CustomPatternMatcherFunc } from 'chevrotain';
+import type { IMultiModeLexerDefinition, TokenType, CustomPatternMatcherFunc, TokenPattern } from 'chevrotain';
 import { createTokenInstance } from 'chevrotain';
 import type { Grammar, GrammarAST, LexerResult, TokenBuilderOptions } from 'langium';
+import { RegExpUtils } from 'langium';
 import { IndentationAwareTokenBuilder, REGULAR_MODE, IGNORE_INDENTATION_MODE, IndentationAwareLexer } from './indentation-aware';
 import { SnakeskinTerminals } from '../generated/ast';
 
 type Terminals = keyof typeof SnakeskinTerminals;
 
 export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminals> {
+	/** Keywords that are allowed at the beginning of a line, otherwise they would be detected as text */
+	readonly startOfLineWhitelist = new Set<string>(['-', '+=', '<', '*', '?']);
+
+	/** Keywords that must be preceded by '-'. This is to avoid them being detected as keywords in other places */
+	readonly dashOnlyKeywords = new Set<string>([
+		'namespace', 'template', 'block', 'return', 'eval', 'head', 'with', 'else',
+		'for', 'break', 'continue', 'forEach', 'forIn', 'try', 'throw', 'catch', 'finally', 'doctype',
+		'include', 'import', 'target', 'super',
+	]);
+
+	/** Keywords that can come after '-' or '- else' */
+	readonly dashOrElseKeywords = new Set<string>(['if', 'unless']);
+
+	/** Keywords that can only appear after 'as' (used in includes) or '-' */
+	readonly dashOrAsKeywords = new Set<string>(['placeholder', 'interface']);
+
 	constructor() {
 		super({
 			ignoreIndentationDelimeters: [
@@ -25,6 +42,56 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 			},
 			defaultMode,
 		}
+	}
+
+	protected override buildKeywordPattern(keywordNode: GrammarAST.Keyword, caseInsensitive: boolean): TokenPattern {
+		const {value: keyword} = keywordNode;
+		// To avoid conflicts with TEXT/ID, the keyword tokens can only appear after '\n- '
+		if (this.startOfLineWhitelist.has(keyword)) {
+			const escaped = RegExpUtils.escapeRegExp(keyword);
+			const regex = new RegExp(`(?<=^\\s*)${escaped}(?=\\s)`, 'my');
+			return (text, offset, tokens) => {
+				// special case for '?' because it can be the tag name
+				// Temporary until '?' is allowed in a tag name
+				if (keyword === '?' && text[offset] === keyword && tokens.at(-1)?.tokenType.name === '<') {
+					return [keyword];
+				}
+				regex.lastIndex = offset;
+				return regex.exec(text);
+			}
+		}
+		if (this.dashOnlyKeywords.has(keyword)) {
+			return (text, offset, tokens) => {
+				if (tokens.at(-1)?.tokenType.name !== '-') {
+					return null;
+				}
+				const match = text.substring(offset, offset + keyword.length);
+				return match === keyword ? [match] : null;
+			}
+		}
+		if (this.dashOrElseKeywords.has(keyword)) {
+			return (text, offset, tokens) => {
+				// either '- <keyword>' or '- else <keyword>'
+				const prevToken = tokens.at(-1)?.tokenType.name ?? '';
+				if (!['-', 'else'].includes(prevToken)) {
+					return null;
+				}
+				const match = text.substring(offset, offset + keyword.length);
+				return match === keyword ? [match] : null;
+			}
+		}
+		if (this.dashOrAsKeywords.has(keyword)) {
+			return (text, offset, tokens) => {
+				// either '- <keyword>' or 'as <keyword>'
+				const prevToken = tokens.at(-1)?.tokenType.name ?? '';
+				if (!['-', 'as'].includes(prevToken)) {
+					return null;
+				}
+				const match = text.substring(offset, offset + keyword.length);
+				return match === keyword ? [match] : null;
+			}
+		}
+		return super.buildKeywordPattern(keywordNode, caseInsensitive);
 	}
 
 	protected override buildTerminalToken(terminal: GrammarAST.TerminalRule): TokenType {

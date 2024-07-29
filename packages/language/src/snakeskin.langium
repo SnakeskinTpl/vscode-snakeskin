@@ -137,7 +137,7 @@ Placeholder:
 Block:
     '-' 'block'
     (container=[Template] '->')?
-    name=(ID|'placeholder') // special case because reserved keyword
+    name=ID
     ('('
         (params+=Parameter (',' params+=Parameter)*)?
     R_PAREN)?
@@ -428,7 +428,8 @@ Super: {infer Super} '-' 'super';
 
 // ---------- Special cases ----------
 
-Ignore: {infer Ignore} '-' '@@ignore';
+Ignore: {infer Ignore} '-' '@@ignore'; // TODO: actually this shouldn't be special. It's a decorator above a template (using a global variable)
+// single '@' means 'with' syntax, double '@@' means "super global variable". when used before template, it's a decorator,
 
 
 // ---------- Terminals ----------
@@ -441,7 +442,7 @@ Ignore: {infer Ignore} '-' '@@ignore';
 AttrKey returns string:
     ATTR_KEY | ID | DASHED_ID | INTERPOLATION |
     DASHED_ID ':' '[' ID (DOT ID)* R_BRAC | // for "v-icon:[el.preIcon]"
-    '#' ('[' ID (DOT ID)* R_BRAC)? | 'target' // special case because of reserved keyword
+    '#' ('[' ID (DOT ID)* R_BRAC)?
 ;
 
 DottedID returns string: ID (DOT ID)*;
@@ -455,7 +456,6 @@ TagName returns string:
     DASHED_ID |
     INTERPOLATION |
     ID INTERPOLATION | // special case for "h{i}"
-    'template' | // special case for template since it's a reserved keyword
     ATTR_KEY // Because elements can start with '@', but ATTR_KEY has a higher priority than AT
 ;
 
@@ -465,7 +465,7 @@ JS_Array returns string: '[' (STRING (',' STRING)*)? R_BRAC;
  * The token builder will be overridden to choose one based on existing inside "& ."
  */
 AttrVal returns string:
-    ID | DASHED_ID | ATTR_VAL_SL | ATTR_VAL_ML | JS_EXPR | TEXT | 'target'; // special case because keyword
+    ID | DASHED_ID | ATTR_VAL_SL | ATTR_VAL_ML | JS_EXPR | TEXT;
 
 
 terminal TEXT: /(?<=[\n\r]+\s+)(?!=+=|\/\*)[^\-\s<:?].*?(?=\r?\n)/s;
