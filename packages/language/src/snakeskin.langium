@@ -481,7 +481,7 @@ JS_Array returns string: L_BRAC (STRING (',' STRING)*)? R_BRAC;
 AttrVal returns string:
     EXPR_TILL_EOL | ID | STRING | DASHED_ID | ATTR_VAL_ML | TEXT;
 
-terminal FUNC_PREFIX: /\(\)\s*=>\s/;
+terminal FUNC_PREFIX: /(?<=\n\s*)\(\)\s*=>\s/;
 terminal TEXT: /(?<=[\n\r]+\s+)(?!=+=|\/\*)[^\-\s<:?].*?(?=\r?\n)/s;
 terminal PARAM_DEFAULT_VALUE: /JS Object, will be overwritten in the TokenBuilder/;
 // Workaround for JavaScript expressions, matches till end of line
