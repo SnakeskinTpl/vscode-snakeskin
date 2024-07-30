@@ -355,8 +355,8 @@ Attribute:
 ;
 
 Class:
-    DOT name=ClassName |
-    nonSticky?=L_BRAC DOT name=ClassName Class? R_BRAC
+    DOT names+=ClassName |
+    nonSticky?=L_BRAC names+=Class+ R_BRAC
 ;
 
 Tag:
