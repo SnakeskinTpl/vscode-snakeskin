@@ -111,7 +111,7 @@ Parameter:
 ;
 
 Template:
-    '-' 'template'
+    '-' async?='async'? 'template'
     name=ID
     L_PAREN
         (params+=Parameter (',' params+=Parameter)*)?

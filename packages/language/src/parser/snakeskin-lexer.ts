@@ -13,7 +13,7 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 
 	/** Keywords that must be preceded by '-'. This is to avoid them being detected as keywords in other places */
 	readonly dashOnlyKeywords = new Set<string>([
-		'namespace', 'template', 'block', 'return', 'eval', 'head', 'with', 'else', 'switch',
+		'namespace', 'block', 'return', 'eval', 'head', 'with', 'else', 'switch',
 		'for', 'break', 'continue', 'forEach', 'forIn', 'try', 'throw', 'catch', 'finally', 'doctype',
 		'include', 'import', 'target', 'super',
 	]);
@@ -85,6 +85,17 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 				// either '- <keyword>' or 'as <keyword>'
 				const prevToken = tokens.at(-1)?.tokenType.name ?? '';
 				if (!['-', 'as'].includes(prevToken)) {
+					return null;
+				}
+				const match = text.substring(offset, offset + keyword.length);
+				return match === keyword ? [match] : null;
+			}
+		}
+		if (keyword === 'template') {
+			// can appear only after dash or 'async'
+			return (text, offset, tokens) => {
+				const prevToken = tokens.at(-1)?.tokenType.name ?? '';
+				if (!['-', 'async'].includes(prevToken)) {
 					return null;
 				}
 				const match = text.substring(offset, offset + keyword.length);
