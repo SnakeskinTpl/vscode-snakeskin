@@ -57,6 +57,7 @@ Directive:
     DocType |
 
     Tag |
+    Comment |
 
     Include |
     Import |
@@ -371,8 +372,10 @@ Tag:
 // TODO: script
 // TODO: style
 // TODO: link
-// TODO: comment
 
+Comment:
+    '<!' text=EXPR_TILL_EOL
+;
 
 // ---------- XII. Char escaping ----------
 
