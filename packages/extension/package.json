@@ -26,7 +26,7 @@
         "grammars": [{
             "language": "snakeskin",
             "scopeName": "source.snakeskin",
-            "path": "syntaxes/snakeskin.tmLanguage.json"
+            "path": "./snakeskin.tmLanguage.json"
         }]
     },
     "activationEvents": [

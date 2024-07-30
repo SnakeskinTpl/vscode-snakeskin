@@ -1,0 +1,1506 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Snakeskin",
+	"patterns": [
+		{
+			"include": "#template-jade-like-mult"
+		},
+		{
+			"include": "#dir-exp-jade-like-mult"
+		},
+		{
+			"include": "#dir-exp-simple-jade-like-mult"
+		},
+		{
+			"include": "#include-jade-like-mult"
+		},
+		{
+			"include": "#target-jade-like-mult"
+		},
+		{
+			"include": "#var-jade-like-mult"
+		},
+		{
+			"include": "#tag-jade-like-mult"
+		},
+		{
+			"include": "#tags-jade-like-mult"
+		},
+		{
+			"include": "#block-jade-like-mult"
+		},
+		{
+			"include": "#dir-exp-shorthands-jade-like-mult"
+		},
+		{
+			"include": "#const-global-jade-like-mult"
+		},
+		{
+			"include": "#output-jade-like-mult"
+		},
+		{
+			"include": "#template-jade-like"
+		},
+		{
+			"include": "#dir-exp-jade-like"
+		},
+		{
+			"include": "#dir-exp-simple-jade-like"
+		},
+		{
+			"include": "#include-jade-like"
+		},
+		{
+			"include": "#target-jade-like"
+		},
+		{
+			"include": "#var-jade-like"
+		},
+		{
+			"include": "#tag-jade-like"
+		},
+		{
+			"include": "#tags-jade-like"
+		},
+		{
+			"include": "#block-jade-like"
+		},
+		{
+			"include": "#dir-jade-like"
+		},
+		{
+			"include": "#dir-exp-shorthands-jade-like"
+		},
+		{
+			"include": "#whitespace-jade-like"
+		},
+		{
+			"include": "#const-global-jade-like"
+		},
+		{
+			"include": "#output-jade-like"
+		}
+	],
+	"repository": {
+		"template-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+(async\\s+)?(template|interface|placeholder)\\s+(.*?\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "storage.modifier.ss"
+				},
+				"3": {
+					"name": "storage.type.function.ss"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "#template-body"
+						}
+					]
+				},
+				"5": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#template-body"
+				}
+			]
+		},
+		"template-jade-like": {
+			"match": "^\\s*(#|-)\\s+(async\\s+)?(template|interface|placeholder)\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "storage.modifier.ss"
+				},
+				"3": {
+					"name": "storage.type.function.ss"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "#template-body"
+						}
+					]
+				}
+			}
+		},
+		"template-classic": {
+			"begin": "(#?\\{)\\s*(async\\s+)?(template|interface|placeholder)\\s+",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.others.ss"
+				},
+				"2": {
+					"name": "storage.modifier.ss"
+				},
+				"3": {
+					"name": "storage.type.function.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#template-body"
+				}
+			]
+		},
+		"template-body": {
+			"patterns": [
+				{
+					"match": "([^(]+)\\s*(\\(.*?\\))(?:\\s+(extends)\\s+(.*?))?(?=@=|\\s*}?$)",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.ss",
+							"patterns": [
+								{
+									"include": "#expression"
+								}
+							]
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "#expression"
+								}
+							]
+						},
+						"3": {
+							"name": "keyword.other.ss"
+						},
+						"4": {
+							"name": "entity.name.function.ss",
+							"patterns": [
+								{
+									"include": "#expression"
+								}
+							]
+						}
+					}
+				},
+				{
+					"match": "@=\\s+([^\\s]+)\\s+(.*?)(?=@=|\\s*}?$)",
+					"captures": {
+						"1": {
+							"name": "storage.modifier.ss"
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "#expression"
+								}
+							]
+						}
+					}
+				},
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"block-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+(block)\\s+(.*?\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "storage.type.function.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#block-body"
+						}
+					]
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#block-body"
+				}
+			]
+		},
+		"block-jade-like": {
+			"match": "^\\s*(#|-)\\s+(block)\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "storage.type.function.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#block-body"
+						}
+					]
+				}
+			}
+		},
+		"block-classic": {
+			"begin": "(#?\\{)\\s*(block)\\s+",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.others.ss"
+				},
+				"2": {
+					"name": "storage.type.function.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#block-body"
+				}
+			]
+		},
+		"block-body": {
+			"patterns": [
+				{
+					"match": "([^(]+)\\s*(\\(.*?\\))(?=\\s*}?$)",
+					"captures": {
+						"1": {
+							"name": "entity.name.function.ss",
+							"patterns": [
+								{
+									"include": "#expression"
+								}
+							]
+						},
+						"2": {
+							"patterns": [
+								{
+									"include": "#expression"
+								}
+							]
+						}
+					}
+				},
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"dir-exp-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+(namespace|import|decorator|final|func|return|catch|yield|await|void|call|forEach|forIn|for|while|do|throw|with|switch|case|if|unless|else(?:\\s+(?:if|unless)?))\\s+(.*?\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"dir-exp-jade-like": {
+			"match": "^\\s*(#|-)\\s+(namespace|import|decorator|putIn|final|func|return|catch|yield|await|void|call|forEach|forIn|for|while|do|throw|with|switch|case|if|unless|else(?:\\s+(?:if|unless)?))\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				}
+			}
+		},
+		"dir-exp-classic": {
+			"begin": "#?\\{\\s*(namespace|import|decorator|putIn|final|func|return|catch|yield|await|void|call|forEach|forIn|for|while|do|throw|with|switch|case|if|unless|else(?:\\s+(if|unless)?))\\s+",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "\\/?}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"dir-exp-simple-jade-like-mult": {
+			"name": "storage.modifier.ss",
+			"begin": "^\\s*(#|-)\\s+(doctype)\\s+(.*?\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "storage.modifier.ss"
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			}
+		},
+		"dir-exp-simple-jade-like": {
+			"match": "^\\s*(#|-)\\s+(doctype)\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "storage.modifier.ss"
+				}
+			}
+		},
+		"dir-exp-simple-classic": {
+			"name": "storage.modifier.ss",
+			"begin": "#?\\{\\s*(doctype|end|\\/)\\s*",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			}
+		},
+		"dir-jade-like": {
+			"match": "^\\s*(#|-)\\s+(eval|head|ignoreWhitespaces|ignoreAllWhitespaces|unIgnoreAllWhitespaces|sp|op|super|break|continue|default|series|parallel|waterfall|try|finally)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				}
+			}
+		},
+		"dir-classic": {
+			"name": "keyword.others.ss",
+			"match": "#?\\{\\s*(eval|head|ignoreWhitespaces|ignoreAllWhitespaces|unIgnoreAllWhitespaces|sp|op|super|break|continue|default|series|parallel|waterfall|try|finally)\\s*}"
+		},
+		"whitespace-jade-like": {
+			"match": "^\\s*(&(?:\\+|-)?|\\\\)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			}
+		},
+		"whitespace-classic": {
+			"name": "keyword.others.ss",
+			"match": "#?\\{\\s*(&(?:\\+|-)?|\\\\)\\s*}"
+		},
+		"dir-exp-shorthands-jade-like-mult": {
+			"begin": "^\\s*(>|\\?|\\(\\)|\\+=)\\s+(.*?\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				},
+				"3": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"dir-exp-shorthands-jade-like": {
+			"match": "^\\s*(>|\\?|\\(\\)|\\+=|\\*)\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				}
+			}
+		},
+		"dir-exp-shorthands-classic": {
+			"begin": "#?\\{\\s*(>|\\?|\\(\\)|\\+=|\\*)\\s*",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "\\/?}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"const-global-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+((?:const|global)\\s+)?(?:(.*?[^<>=~^!+\\-*/%|]=[^<>=~^!+\\-*/%|].*?)\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#var-single-variable"
+						}
+					]
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#var-single-variable"
+				}
+			]
+		},
+		"const-global-jade-like": {
+			"match": "^\\s*(#|-)\\s+((?:const|global)\\s+)?(.*?[^<>=~^!+\\-*/%|]=[^<>=~^!+\\-*/%|].*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#var-single-variable"
+						}
+					]
+				}
+			}
+		},
+		"const-global-classic": {
+			"begin": "#?\\{\\s*((const|global)\\s+)?(?=.*?[^<>=~^!+\\-*/%|]=[^<>=~^!+\\-*/%|])",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#var-single-variable"
+				}
+			]
+		},
+		"output-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+(output\\s+)?(.*?\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#var-single-variable"
+						}
+					]
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"output-jade-like": {
+			"match": "^\\s*(#|-)\\s+(output\\s+)?(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				}
+			}
+		},
+		"output-classic": {
+			"begin": "#?\\{\\s*(output\\s+)?",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"var-jade-like-mult": {
+			"begin": "^\\s*(?:(#|-)\\s+(var)|(:))\\s+(?:(.*?)\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "keyword.operator.ss"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "#var-body"
+						}
+					]
+				},
+				"5": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#var-body"
+				}
+			]
+		},
+		"var-jade-like": {
+			"match": "^\\s*(?:(#|-)\\s+(var)|(:))\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "keyword.operator.ss"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "#var-body"
+						}
+					]
+				}
+			}
+		},
+		"var-classic": {
+			"begin": "#?\\{\\s*(var\\s+|:)",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "\\/?}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#var-body"
+				}
+			]
+		},
+		"var-body": {
+			"patterns": [
+				{
+					"name": "storage.modifier.ss",
+					"matches": "\\bputIn\\s+(?=[^=\\s])"
+				},
+				{
+					"include": "#var-single-variable"
+				}
+			]
+		},
+		"include-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+(include)\\s+(?:(.*)\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#include-body"
+						}
+					]
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#include-body"
+				}
+			]
+		},
+		"include-jade-like": {
+			"match": "^\\s*(#|-)\\s+(include)\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#include-body"
+						}
+					]
+				}
+			}
+		},
+		"include-classic": {
+			"begin": "#?\\{\\s*include\\s+",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#include-body"
+				}
+			]
+		},
+		"include-body": {
+			"match": "(?:(.*?)\\s+(as)\\s+(.*?)|(.*?))(?=}?$)",
+			"captures": {
+				"1": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "keyword.others.ss"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				}
+			}
+		},
+		"target-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+(target)\\s+(?:(.*)\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#target-body"
+						}
+					]
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#target-body"
+				}
+			]
+		},
+		"target-jade-like": {
+			"match": "^\\s*(#|-)\\s+(target)\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#target-body"
+						}
+					]
+				}
+			}
+		},
+		"target-classic": {
+			"begin": "#?\\{\\s*target\\s+",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#target-body"
+				}
+			]
+		},
+		"target-body": {
+			"match": "(?:(.*?)\\s+(as)\\s+(.*?)|(.*?))(?=}?$)",
+			"captures": {
+				"1": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "variable.ss"
+				},
+				"4": {
+					"patterns": [
+						{
+							"include": "#expression"
+						}
+					]
+				}
+			}
+		},
+		"tag-jade-like-mult": {
+			"begin": "^\\s*(?:(#|-)\\s+(tag)|(<))\\s+(?:([\\w:\\-]*)(.*)\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "keyword.operator.ss"
+				},
+				"4": {
+					"name": "entity.name.tag.other.ss",
+					"patterns": [
+						{
+							"include": "#interpolation"
+						}
+					]
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "#tag-body"
+						}
+					]
+				},
+				"6": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#tag-body"
+				}
+			]
+		},
+		"tag-jade-like": {
+			"match": "^\\s*(?:(#|-)\\s+(tag)|(<))\\s+([\\w:\\-]*)(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"name": "keyword.operator.ss"
+				},
+				"4": {
+					"name": "entity.name.tag.other.ss",
+					"patterns": [
+						{
+							"include": "#interpolation"
+						}
+					]
+				},
+				"5": {
+					"patterns": [
+						{
+							"include": "#tag-body"
+						}
+					]
+				}
+			}
+		},
+		"tag-classic": {
+			"begin": "(#?\\{\\s*(?:tag\\s+|<))([\\w:\\-]*)",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.others.ss"
+				},
+				"2": {
+					"name": "entity.name.tag.other.ss",
+					"patterns": [
+						{
+							"include": "#interpolation"
+						}
+					]
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#tag-body"
+				}
+			]
+		},
+		"tags-jade-like-mult": {
+			"begin": "^\\s*(#|-)\\s+(link|style|script|comment|attr)\\s+(?:(.*)\\s+)?(&)[\\r\\n]",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#tag-body"
+						}
+					]
+				},
+				"4": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"end": "\\s+(\\.)(?:[\\r\\n]|$)",
+			"endCaptures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#tag-body"
+				}
+			]
+		},
+		"tags-jade-like": {
+			"match": "^\\s*(#|-)\\s+(link|style|script|comment|attr)\\s+(.*)",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.ss"
+				},
+				"2": {
+					"name": "keyword.others.ss"
+				},
+				"3": {
+					"patterns": [
+						{
+							"include": "#tag-body"
+						}
+					]
+				}
+			}
+		},
+		"tags-classic": {
+			"begin": "#?\\{\\s*(link|style|script|comment|attr)\\s+",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#tag-body"
+				}
+			]
+		},
+		"tag-body": {
+			"patterns": [
+				{
+					"include": "#interpolation"
+				},
+				{
+					"name": "entity.other.attribute-name.ss",
+					"match": "\\[?\\.[\\w:\\-&]*\\]?"
+				},
+				{
+					"name": "entity.other.attribute-name.id.ss",
+					"match": "#[\\w:\\-]*"
+				},
+				{
+					"name": "keyword.other.ss",
+					"match": "![\\w:\\-]*"
+				},
+				{
+					"include": "#attr"
+				}
+			]
+		},
+		"attr": {
+			"name": "keyword.operator.ss",
+			"match": "s+(=|\\|)\\s+|\\s+\\(\\(\\s+|\\s+\\)\\)\\s+"
+		},
+		"interpolation": {
+			"patterns": [
+				{
+					"include": "#string-character-escape"
+				},
+				{
+					"include": "#tpl"
+				}
+			]
+		},
+		"tpl": {
+			"name": "template.element.ss",
+			"begin": "\\$\\{",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"expression": {
+			"name": "meta.expression.ss",
+			"patterns": [
+				{
+					"include": "#comment"
+				},
+				{
+					"include": "#literal"
+				},
+				{
+					"include": "#block"
+				},
+				{
+					"include": "#paren-expression"
+				},
+				{
+					"include": "#new-expr"
+				},
+				{
+					"include": "#filter-operator"
+				},
+				{
+					"include": "#import-operator"
+				},
+				{
+					"include": "#expression-operator"
+				},
+				{
+					"include": "#ss-operator"
+				},
+				{
+					"include": "#placeholder-operator"
+				},
+				{
+					"include": "#relational-operator"
+				},
+				{
+					"include": "#arithmetic-operator"
+				},
+				{
+					"include": "#logic-operator"
+				},
+				{
+					"include": "#assignment-operator"
+				},
+				{
+					"include": "#storage-keyword"
+				}
+			]
+		},
+		"comment": {
+			"name": "comment.ss",
+			"patterns": [
+				{
+					"include": "#comment-block-doc"
+				},
+				{
+					"include": "#comment-block"
+				},
+				{
+					"include": "#comment-line"
+				}
+			]
+		},
+		"comment-block-doc": {
+			"name": "comment.block.documentation.ss",
+			"begin": "/\\*\\*(?!/)",
+			"end": "\\*/"
+		},
+		"comment-block": {
+			"name": "comment.block.ss",
+			"begin": "/\\*",
+			"end": "\\*/"
+		},
+		"comment-line": {
+			"name": "comment.line.ss",
+			"match": "(///).*$\\n?"
+		},
+		"var-single-variable": {
+			"name": "meta.var-single-variable.expr.ss",
+			"begin": "\\b([a-zA-Z_$][\\w$]*)\\s*(=?)",
+			"beginCaptures": {
+				"1": {
+					"name": "variable.ss"
+				}
+			},
+			"end": "(?=}?$|[;,])",
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"await-modifier": {
+			"name": "storage.modifier.ss",
+			"match": "\\bawait\\b"
+		},
+		"cast": {
+			"name": "cast.expr.ss",
+			"begin": "(?:(?<=return|throw|yield|await|[=(,:>]))\\s*(<)(?!<?\\=)",
+			"beginCaptures": {
+				"1": {
+					"name": "meta.brace.angle.ss"
+				}
+			},
+			"end": ">",
+			"endCaptures": {
+				"0": {
+					"name": "meta.brace.angle.ss"
+				}
+			}
+		},
+		"new-expr": {
+			"name": "new.expr.ss",
+			"begin": "\\b(new)\\b",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.others.ss"
+				}
+			},
+			"end": "(?=[(;]|$)",
+			"patterns": [
+				{
+					"include": "#comment"
+				}
+			]
+		},
+		"expression-operator": {
+			"name": "keyword.others.ss",
+			"match": "\\b(delete|in|instanceof|new|typeof|of|as)\\b"
+		},
+		"ss-operator": {
+			"name": "keyword.operator.ss",
+			"match": "=>|->|@"
+		},
+		"filter-operator": {
+			"name": "keyword.other.ss",
+			"match": "\\|[!a-zA-Z_$][\\w$.]*"
+		},
+		"placeholder-operator": {
+			"name": "variable.ss",
+			"match": "%(fileName|fileDir)%|\\b(TPL_NAME|PARENT_TPL_NAME|self|callee|$0|$_|$class|getTplResult|clearTplResult|arguments|exports)\\b"
+		},
+		"import-operator": {
+			"name": "keyword.control.import.include.ss",
+			"match": "\\b(import|from)\\b"
+		},
+		"arithmetic-operator": {
+			"name": "keyword.operator.arithmetic.ss",
+			"match": "\\*|/|\\-\\-|\\-|\\+\\+|\\+|%"
+		},
+		"relational-operator": {
+			"name": "keyword.operator.comparison.ss",
+			"match": "===|!==|==|!=|<=|>=|<>|=|<|>"
+		},
+		"assignment-operator": {
+			"name": "keyword.operator.assignment.ss",
+			"match": "<<=|>>>=|>>=|\\*=|(?<!\\()/=|%=|\\+=|\\-=|&=|\\^="
+		},
+		"logic-operator": {
+			"name": "keyword.operator.arithmetic.ss",
+			"match": "\\!|&&|&|~|\\^|\\|\\||\\|"
+		},
+		"storage-keyword": {
+			"name": "storage.type.ss",
+			"match": "\\b(var|let|function|const|module|namespace|void|export)\\b"
+		},
+		"paren-expression": {
+			"begin": "\\(",
+			"beginCaptures": {
+				"0": {
+					"name": "meta.brace.paren.ss"
+				}
+			},
+			"end": "\\)",
+			"endCaptures": {
+				"0": {
+					"name": "meta.brace.paren.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"block": {
+			"name": "meta.block.ss",
+			"begin": "\\{",
+			"beginCaptures": {
+				"0": {
+					"name": "meta.brace.curly.ss"
+				}
+			},
+			"end": "}",
+			"endCaptures": {
+				"0": {
+					"name": "meta.brace.curly.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#object-member"
+				},
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"object-member": {
+			"name": "meta.object.member.ss",
+			"begin": "[a-zA-Z_$][\\w$]*\\s*:",
+			"end": "(?=,|})",
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"literal": {
+			"name": "literal.ss",
+			"patterns": [
+				{
+					"include": "#numeric-literal"
+				},
+				{
+					"include": "#boolean-literal"
+				},
+				{
+					"include": "#null-literal"
+				},
+				{
+					"include": "#undefined-literal"
+				},
+				{
+					"include": "#this-literal"
+				},
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#regex"
+				},
+				{
+					"include": "#array-literal"
+				}
+			]
+		},
+		"array-literal": {
+			"name": "meta.array.literal.ss",
+			"begin": "\\[",
+			"beginCaptures": {
+				"0": {
+					"name": "meta.brace.square.ss"
+				}
+			},
+			"end": "\\]",
+			"endCaptures": {
+				"0": {
+					"name": "meta.brace.square.ss"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"numeric-literal": {
+			"name": "constant.numeric.ss",
+			"match": "\\b(?<=[^$])((0(x|X)[0-9a-fA-F]+)|(([0-9]+(\\.[0-9]+)?))([eE]([+-]?)[0-9]+(\\.[0-9]+)?)?)\\b"
+		},
+		"boolean-literal": {
+			"name": "constant.language.boolean.ss",
+			"match": "\\b(false|true)\\b"
+		},
+		"null-literal": {
+			"name": "constant.language.null.ss",
+			"match": "\\b(null)\\b"
+		},
+		"this-literal": {
+			"name": "constant.language.this.ss",
+			"match": "\\b(this)\\b"
+		},
+		"undefined-literal": {
+			"name": "constant.language.ss",
+			"match": "\\b(undefined)\\b"
+		},
+		"string": {
+			"name": "string.quoted.ss",
+			"patterns": [
+				{
+					"include": "#qstring-single"
+				},
+				{
+					"include": "#qstring-double"
+				}
+			]
+		},
+		"qstring-double": {
+			"name": "string.quoted.double.ss",
+			"begin": "\"",
+			"end": "\"|([^\\\\\\n]$)",
+			"patterns": [
+				{
+					"include": "#string-character-escape"
+				}
+			]
+		},
+		"qstring-single": {
+			"name": "string.quoted.single.ss",
+			"begin": "'",
+			"end": "\\'|([^\\\\\\n]$)",
+			"patterns": [
+				{
+					"include": "#string-character-escape"
+				}
+			]
+		},
+		"regex": {
+			"name": "string.quoted.regex.ss",
+			"begin": "(?<=[=(:,\\[]|^|return|&&|\\|\\||!)\\s*(/)(?![/*+{}?])",
+			"end": "$|(/)[igm]*",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ss",
+					"match": "\\\\."
+				},
+				{
+					"name": "constant.character.class.ss",
+					"match": "\\[(\\\\\\]|[^\\]])*\\]"
+				}
+			]
+		},
+		"string-character-escape": {
+			"name": "constant.character.escape",
+			"match": "\\\\(x\\h{2}|[0-2][0-7]{,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)"
+		}
+	},
+	"scopeName": "source.snakeskin"
+}
