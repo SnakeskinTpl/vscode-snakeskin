@@ -88,7 +88,7 @@ fragment Body:
  */
 ReferencePath:
     ( name=(DASHED_ID|ID)
-    | '[' name=(STRING|MACRO) (PIPE filters+=ID)* R_BRAC
+    | L_BRAC name=(STRING|MACRO) (PIPE filters+=ID)* R_BRAC
     )
     (DOT next=ReferencePath)?
 ;
@@ -112,7 +112,7 @@ Parameter:
 Template:
     '-' 'template'
     name=ID
-    '('
+    L_PAREN
         (params+=Parameter (',' params+=Parameter)*)?
     R_PAREN
     ('extends' extendsWith?=AT? extends=ReferencePath)?
@@ -127,7 +127,7 @@ Template:
 Placeholder:
     '-' 'placeholder'
     name=ID
-    '('
+    L_PAREN
         (params+=Parameter (',' params+=Parameter)*)?
     R_PAREN
     ('extends' extendsWith?=AT? extends=ReferencePath)?
@@ -138,7 +138,7 @@ Block:
     '-' 'block'
     (container=[Template] '->')?
     name=ID
-    ('('
+    (L_PAREN
         (params+=Parameter (',' params+=Parameter)*)?
     R_PAREN)?
     Body?
@@ -150,8 +150,7 @@ Block:
 // ---------- II. Execution/output ----------
 
 Output:
-    text=(TEXT|INTERPOLATION|',') | // special case for comma because it is a token on its own
-    '(' text=TEXT2 R_PAREN // special case for '(' because it has a priority as a token since it's a literal
+    text=(TEXT|INTERPOLATION|',')  // special case for comma because it is a token on its own
 ;
 
 /**
@@ -159,18 +158,18 @@ Output:
  */
 Call:
     '+='
-    value=(ATTR_VAL_SL|TEXT) // TODO: any JS expression
+    value=EXPR_TILL_EOL
     Body?
 ;
 
 Void:
     '?'
-    content=JS_EXPR
+    content=EXPR_TILL_EOL
 ;
 
 Return:
     '-' 'return'
-    expr=JS_EXPR
+    expr=EXPR_TILL_EOL
 ;
 
 
@@ -205,7 +204,7 @@ With:
 Var:
     ':'
     ('putIn' name=ID Body
-    | name=ID ('=' initialValue=(AttrVal|JS_EXPR))?
+    | name=ID ('=' initialValue=(AttrVal|EXPR_TILL_EOL))?
     )
 ;
 
@@ -221,8 +220,8 @@ Const:
 
 If:
     '-' 'if'
-    ( '(' EXC? condition=DottedID R_PAREN // to handle (!IS_PROD)
-    | condition=(DottedID|JS_EXPR)
+    ( L_PAREN EXC? condition=DottedID R_PAREN // to handle (!IS_PROD)
+    | condition=(DottedID|EXPR_TILL_EOL)
     )
     Body
     // alternatives+=(ElseIf | ElseUnless)*
@@ -232,13 +231,13 @@ If:
 
 ElseIf:
     '-' 'else' 'if'
-    condition=JS_EXPR
+    condition=EXPR_TILL_EOL
     Body
 ;
 
 ElseUnless:
     '-' 'else' 'unless'
-    condition=JS_EXPR
+    condition=EXPR_TILL_EOL
     Body
 ;
 
@@ -249,7 +248,7 @@ Else:
 
 Unless:
     '-' 'unless'
-    condition=JS_EXPR
+    condition=EXPR_TILL_EOL
     Body
     // (alternatives+=ElseIf | alternatives+=ElseUnless)*
     // else=Else?
@@ -262,7 +261,7 @@ Unless:
 
 For:
     '-' 'for'
-    loop=JS_EXPR
+    loop=EXPR_TILL_EOL
     // initialization=ID // TODO: any JS expression
     // ';'
     // condition=ID // TODO: any JS expression
@@ -283,7 +282,7 @@ Continue: {infer Continue} '-' 'continue';
 
 ForEach:
     '-' 'forEach'
-    collection=(ID | JS_Array | ATTR_KEY) // TODO: any JS expression
+    AT? collection=(ID | JS_Array | ATTR_KEY) // TODO: any JS expression
     '=>'
     name=ID
     (',' idx=ID)?
@@ -304,7 +303,7 @@ ForIn:
 
 Try: '-' 'try' Body;
 
-Throw: '-' 'throw' name=JS_EXPR; // TODO: any JS expression
+Throw: '-' 'throw' name=EXPR_TILL_EOL; // TODO: any JS expression
 
 Catch:
     '-' 'catch'
@@ -346,7 +345,7 @@ Attribute:
 
 Class:
     DOT name=ClassName |
-    nonSticky?='[' DOT name=ClassName Class? R_BRAC
+    nonSticky?=L_BRAC DOT name=ClassName Class? R_BRAC
 ;
 
 Tag:
@@ -385,7 +384,7 @@ Include:
 Import:
     '-' 'import'
     name=ID
-    'from'
+    FROM
     path=STRING
 ;
 
@@ -393,14 +392,14 @@ Import:
 // ---------- XIV. Creating literals ----------
 
 Func:
-    '(' R_PAREN '=>'
+    FUNC_PREFIX
     params+=ID (',' params+=ID)*
     Body
 ;
 
 Target:
     '-' 'target'
-    value=JS_EXPR // TODO: any JS expression
+    value=EXPR_TILL_EOL // TODO: any JS expression
     ('as' name=ID)? // TODO: any JS expression
     Body?
 ;
@@ -440,9 +439,9 @@ Ignore: {infer Ignore} '-' '@@ignore'; // TODO: actually this shouldn't be speci
 // and custom pattern functions, or perhaps a custom lexer from scratch (not using Chevrotain's lexer)
 
 AttrKey returns string:
-    ATTR_KEY | ID | DASHED_ID | INTERPOLATION |
-    DASHED_ID ':' '[' ID (DOT ID)* R_BRAC | // for "v-icon:[el.preIcon]"
-    '#' ('[' ID (DOT ID)* R_BRAC)?
+    ':'? ATTR_KEY | ':'? ID | ':'? DASHED_ID | INTERPOLATION |
+    DASHED_ID ':' L_BRAC ID (DOT ID)* R_BRAC | // for "v-icon:[el.preIcon]"
+    '#' (L_BRAC ID (DOT ID)* R_BRAC)?
 ;
 
 DottedID returns string: ID (DOT ID)*;
@@ -452,51 +451,43 @@ ClassName returns string:
 ;
 
 TagName returns string:
-    ID |
-    DASHED_ID |
+    AT? ID |
+    AT? DASHED_ID |
+    ':'? ID |
+    ':'? DASHED_ID |
     INTERPOLATION |
-    ID INTERPOLATION | // special case for "h{i}"
-    ATTR_KEY // Because elements can start with '@', but ATTR_KEY has a higher priority than AT
+    ID INTERPOLATION // special case for "h{i}"
 ;
 
-JS_Array returns string: '[' (STRING (',' STRING)*)? R_BRAC;
+JS_Array returns string: L_BRAC (STRING (',' STRING)*)? R_BRAC;
 
 /**
  * The token builder will be overridden to choose one based on existing inside "& ."
  */
 AttrVal returns string:
-    ID | DASHED_ID | ATTR_VAL_SL | ATTR_VAL_ML | JS_EXPR | TEXT;
+    EXPR_TILL_EOL | ID | STRING | DASHED_ID | ATTR_VAL_ML | TEXT;
 
-
+terminal FUNC_PREFIX: /\(\)\s*=>\s/;
 terminal TEXT: /(?<=[\n\r]+\s+)(?!=+=|\/\*)[^\-\s<:?].*?(?=\r?\n)/s;
-terminal TEXT2: /(?<=[\n\r]+\s+\()(?!=+=)[^\-\s<:?].*(?=\)\r?\n)/; // special case for "(b: { @@buildVersion })"
 // terminal PARAM_DEFAULT_VALUE: /(?<= = )[\p{L}\d'"{} ]+(?=\)|,)/u; // \p{L} instead of \w to match any letter (including Russian)
 terminal PARAM_DEFAULT_VALUE: /(?<= = )((\{(\w+:\s*(\{\}|\w+)(,\s*\w+:\s*(\{\}|\w+))*)?\})|[\p{L}\d'" ]+)(?=\)|,)/u; // \p{L} instead of \w to match any letter (including Russian)
-// Workaround for JavaScript expressions
-terminal JS_EXPR: /(?<=\s(return|=|if|for|throw|unless|- target|\?) ).+?(?=\r?\n)/;
+// Workaround for JavaScript expressions, matches till end of line
+terminal EXPR_TILL_EOL: /(?<=\s(return|=|if|for|throw|unless|- target|\?) ).+?(?=\r?\n)/;
+terminal FROM: 'from'; // To have a lower priority than "EXPR_TILL_EOL"
 terminal DASHED_ID: /[_a-zA-Z\-][\w\-]*?(?=-\w)[\-\w]+/;
 terminal ID: /[_a-zA-Z][\w]*/;
 
-// Attribute values come after an '=' sign, then they match anything until " | " or a new line
-// positive lookbehind/ahead to avoid mixing between token types due to overlap.
-/**
- * When not inside & . context, attr ends with new line or " | " (or maybe " &\n" ?)
- */
-terminal ATTR_VAL_SL: /(?<==\s*).+?(?=\r?\n|\s+\|\s+)/;
-// terminal ATTR_VAL_SL: /(?<==\s*).+?(?=\r?\n|\s+\|\s+|\s+&\r?\n)/;
 /**
  * When inside & . context, attr ends with " | " or " .\n"
  */
 terminal ATTR_VAL_ML: /(?<==\s*).+?(?=\s+\.\s+|\s+\|\s+)/s;
 
-terminal fragment BIND_ATTR_KEY: /\:[\w\-]*/;
-terminal fragment SLOT_ATTR_KEY: /\#[\w\-]*/;
-terminal fragment EVENT_ATTR_KEY: /\@[\w:\-\[\]]*/;
+terminal fragment EVENT_ATTR_KEY: /(?<!<\s*|\()\@[\w:\-\[\]]*/; // negative lookahead to avoid matching tag names preceded with '@' or param default values
 terminal fragment EVENT_ATTR_KEY2: /\@\[[\w:\-\(\)\.]*?\]/; // special case for "@[getControlEvent(tmp.buttonControl)]"
 terminal fragment DATA_ATTR_KEY: /-[\w\-]*/;
 terminal fragment ATTR_KEY_END: /(?=\s*=\s*|\.|\s)/; // Attr key ends with an equal sign or a dot for modifiers, or just whitespace (if no value)
-terminal ATTR_KEY: (BIND_ATTR_KEY|SLOT_ATTR_KEY|EVENT_ATTR_KEY|EVENT_ATTR_KEY2|DATA_ATTR_KEY|DASHED_ID|ID) INTERPOLATION? ATTR_KEY_END;
-terminal AT: /@/; // Again, to have a lower priority than "JS_EXPR"
+terminal ATTR_KEY: (EVENT_ATTR_KEY|EVENT_ATTR_KEY2|DATA_ATTR_KEY|DASHED_ID|ID) INTERPOLATION? ATTR_KEY_END;
+terminal AT: /@/; // Again, to have a lower priority than "EXPR_TILL_EOL"
 
 terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 terminal MACRO: /%\w+%/;
@@ -513,7 +504,9 @@ terminal CLASS_NAME: /[_a-z\-&][\w\-&]*/;
 terminal DOT: /\./; // For class names. Lower priority than DOT_NL
 
 // All of the following is also to give a lower priority
+terminal L_PAREN: /\(/;
 terminal R_PAREN: /\)/;
+terminal L_BRAC: /\[/;
 terminal R_BRAC: /\]/;
 terminal PIPE: /\|/;
 terminal EXC: /!/;
