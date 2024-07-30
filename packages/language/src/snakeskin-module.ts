@@ -37,7 +37,7 @@ export const SnakeskinModule: Module<SnakeskinServices, PartialLangiumServices &
     lsp: {
         SemanticTokenProvider: (services) => new SemanticTokenProvider(services),
         HoverProvider: (services) => new HoverProvider(services),
-    }
+    },
 };
 
 /**

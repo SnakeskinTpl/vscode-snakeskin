@@ -29,7 +29,7 @@ export class SemanticTokenProvider extends AbstractSemanticTokenProvider {
 		} else if (isClass(node)) {
 			acceptor({
 				node,
-				property: 'name',
+				property: 'names',
 				type: SemanticTokenTypes.modifier,
 				modifier: node.nonSticky ? SemanticTokenModifiers.static : [],
 			});
