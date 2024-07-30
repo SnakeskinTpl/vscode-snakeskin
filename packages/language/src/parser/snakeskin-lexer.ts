@@ -84,7 +84,7 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 			return (text, offset, tokens) => {
 				// either '- <keyword>' or 'as <keyword>'
 				const prevToken = tokens.at(-1)?.tokenType.name ?? '';
-				if (!['-', 'as'].includes(prevToken)) {
+				if (!['-', 'AS'].includes(prevToken)) {
 					return null;
 				}
 				const match = text.substring(offset, offset + keyword.length);
@@ -95,7 +95,7 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 			// can appear only after dash or 'async'
 			return (text, offset, tokens) => {
 				const prevToken = tokens.at(-1)?.tokenType.name ?? '';
-				if (!['-', 'async'].includes(prevToken)) {
+				if (!['-', 'ASYNC'].includes(prevToken)) {
 					return null;
 				}
 				const match = text.substring(offset, offset + keyword.length);

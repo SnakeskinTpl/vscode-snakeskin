@@ -111,7 +111,7 @@ Parameter:
 ;
 
 Template:
-    '-' async?='async'? 'template'
+    '-' async?=ASYNC? 'template'
     name=ID
     L_PAREN
         (params+=Parameter (',' params+=Parameter)*)?
@@ -203,7 +203,7 @@ With:
 // ---------- V. Vars ----------
 
 Var:
-    ':'
+    COLON
     ('putIn' name=ID Body
     | name=ID ('=' initialValue=(AttrVal|EXPR_TILL_EOL))?
     )
@@ -389,7 +389,7 @@ Include:
     '-' 'include'
     path=STRING
     (PIPE filters+=ID)*
-    ('as' renderAs=('placeholder' | 'interface'))?
+    (AS renderAs=('placeholder' | 'interface'))?
 ;
 
 Import:
@@ -411,7 +411,7 @@ Func:
 Target:
     '-' 'target'
     value=EXPR_TILL_EOL // TODO: any JS expression
-    ('as' name=ID)? // TODO: any JS expression
+    (AS name=ID)? // TODO: any JS expression
     Body?
 ;
 
@@ -450,8 +450,8 @@ Ignore: {infer Ignore} '-' '@@ignore'; // TODO: actually this shouldn't be speci
 // and custom pattern functions, or perhaps a custom lexer from scratch (not using Chevrotain's lexer)
 
 AttrKey returns string:
-    ':'? ATTR_KEY | ':'? ID | ':'? DASHED_ID | INTERPOLATION |
-    DASHED_ID ':' L_BRAC ID (DOT ID)* R_BRAC | // for "v-icon:[el.preIcon]"
+    COLON? ATTR_KEY | COLON? ID | COLON? DASHED_ID | INTERPOLATION |
+    DASHED_ID COLON L_BRAC ID (DOT ID)* R_BRAC | // for "v-icon:[el.preIcon]"
     '#' (L_BRAC ID (DOT ID)* R_BRAC)?
 ;
 
@@ -464,8 +464,8 @@ ClassName returns string:
 TagName returns string:
     AT? ID |
     AT? DASHED_ID |
-    ':'? ID |
-    ':'? DASHED_ID |
+    COLON? ID |
+    COLON? DASHED_ID |
     INTERPOLATION |
     ID INTERPOLATION // special case for "h{i}"
 ;
@@ -485,6 +485,8 @@ terminal PARAM_DEFAULT_VALUE: /JS Object, will be overwritten in the TokenBuilde
 terminal EXPR_TILL_EOL: /(?<=\s(return|=|if|for|throw|unless|- target|\?) ).+?(?=\r?\n)/;
 terminal FROM: 'from'; // To have a lower priority than "EXPR_TILL_EOL"
 terminal DASHED_ID: /[_a-zA-Z\-][\w\-]*?(?=-\w)[\-\w]+/;
+terminal AS: /(?<=\s)as(?=\s)/;
+terminal ASYNC: /(?<=\s)async(?=\s)/;
 terminal ID: /[_a-zA-Z][\w]*/;
 
 /**
@@ -520,6 +522,7 @@ terminal L_BRAC: /\[/;
 terminal R_BRAC: /\]/;
 terminal PIPE: /\|/;
 terminal EXC: /!/;
+terminal COLON: /:/;
 
 hidden terminal WS: /[ \t]+/;
 
