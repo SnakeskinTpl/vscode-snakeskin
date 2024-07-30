@@ -23,20 +23,22 @@ export class HoverProvider extends AstNodeHoverProvider {
 
     // The actual logic of getting hover content for a specific node
     async getAstNodeHoverContent(node: AstNode): Promise<Hover|undefined> {
+        const range = node.$cstNode?.range;
+
         if (isTag(node)) {
             const name = ['.', undefined].includes(node.tagName) ? 'div' : node.tagName.toLowerCase();
             const vueTag = this.vueData.tags?.find(tag => tag.name.toLowerCase() === name);
             if (vueTag) {
-                return {contents: generateDocumentation(vueTag, undefined, true)};
+                return {contents: generateDocumentation(vueTag, undefined, true), range};
             }
 
             const htmlTag = getDefaultHTMLDataProvider().provideTags()
                 .find(tag => tag.name.toLowerCase() === name);
             if (htmlTag) {
-                return {contents: generateDocumentation(htmlTag, undefined, true)};
+                return {contents: generateDocumentation(htmlTag, undefined, true), range};
             }
             if (name === '?') {
-                return {contents: 'Placeholder tag. Will be removed during translation.'};
+                return {contents: 'Placeholder tag. Will be removed during translation.', range};
             }
         } else if (isAttribute(node)) {
             const {key} = node;
@@ -45,7 +47,7 @@ export class HoverProvider extends AstNodeHoverProvider {
 
             const vueGlobalAttr = this.vueData.globalAttributes?.find(attr => attr.name.toLowerCase() === node.key);
             if (vueGlobalAttr) {
-                return {contents: generateDocumentation(vueGlobalAttr, undefined, true)};
+                return {contents: generateDocumentation(vueGlobalAttr, undefined, true), range};
             }
 
             const tagName = node.$container.tagName?.toLowerCase() ?? '';
@@ -53,14 +55,14 @@ export class HoverProvider extends AstNodeHoverProvider {
             if (vueTag) {
                 const attr = vueTag.attributes?.find(attr => normalizedKey === attr.name.toLowerCase());
                 if (attr) {
-                    return {contents: generateDocumentation(attr, undefined, true)};
+                    return {contents: generateDocumentation(attr, undefined, true), range};
                 }
             }
 
             const attrs = getDefaultHTMLDataProvider().provideAttributes(tagName);
             const attr = attrs.find(attr => normalizedKey === attr.name.toLowerCase());
             if (attr) {
-                return {contents: generateDocumentation(attr, undefined, true)};
+                return {contents: generateDocumentation(attr, undefined, true), range};
             }
         }
         return undefined;
