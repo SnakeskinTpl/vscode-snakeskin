@@ -469,8 +469,7 @@ AttrVal returns string:
 
 terminal FUNC_PREFIX: /\(\)\s*=>\s/;
 terminal TEXT: /(?<=[\n\r]+\s+)(?!=+=|\/\*)[^\-\s<:?].*?(?=\r?\n)/s;
-// terminal PARAM_DEFAULT_VALUE: /(?<= = )[\p{L}\d'"{} ]+(?=\)|,)/u; // \p{L} instead of \w to match any letter (including Russian)
-terminal PARAM_DEFAULT_VALUE: /(?<= = )((\{(\w+:\s*(\{\}|\w+)(,\s*\w+:\s*(\{\}|\w+))*)?\})|[\p{L}\d'" ]+)(?=\)|,)/u; // \p{L} instead of \w to match any letter (including Russian)
+terminal PARAM_DEFAULT_VALUE: /JS Object, will be overwritten in the TokenBuilder/;
 // Workaround for JavaScript expressions, matches till end of line
 terminal EXPR_TILL_EOL: /(?<=\s(return|=|if|for|throw|unless|- target|\?) ).+?(?=\r?\n)/;
 terminal FROM: 'from'; // To have a lower priority than "EXPR_TILL_EOL"

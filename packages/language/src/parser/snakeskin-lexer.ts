@@ -2,6 +2,7 @@ import type { IMultiModeLexerDefinition, TokenType, TokenPattern } from 'chevrot
 import type { Grammar, GrammarAST, LexerResult, TokenBuilderOptions } from 'langium';
 import { RegExpUtils } from 'langium';
 import { IndentationAwareTokenBuilder, REGULAR_MODE, IGNORE_INDENTATION_MODE, IndentationAwareLexer } from './indentation-aware';
+import { consumeLiteral } from './js-literal';
 import { SnakeskinTerminals } from '../generated/ast';
 
 type Terminals = keyof typeof SnakeskinTerminals;
@@ -116,6 +117,23 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 					i++;
 				}
 				return [text.substring(offset, i)];
+			}
+		} else if (tokenType.name === 'PARAM_DEFAULT_VALUE') {
+			tokenType.PATTERN = (text, offset, tokens, groups) => {
+				if (tokens.length < 3) return null;
+				const [{tokenType: {name: parenOrComma}}, {tokenType: {name: id}}, {tokenType: {name: eq}}] = tokens.slice(-3);
+				if (eq !== '=' || id !== 'ID' || !['L_PAREN', ',', 'AT'].includes(parenOrComma)) {
+					return null;
+				}
+
+				const nextText = text.substring(offset);
+				const [restOfLine] = nextText.match(/.*/)!;
+				const match = consumeLiteral(restOfLine);
+
+				if (match.length) {
+					return [match];
+				}
+				return null;
 			}
 		} else if (tokenType.name === 'EXPR_TILL_EOL') {
 			tokenType.PATTERN = (text, offset, tokens, groups) => {
