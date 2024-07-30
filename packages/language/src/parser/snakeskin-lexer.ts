@@ -13,7 +13,7 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 
 	/** Keywords that must be preceded by '-'. This is to avoid them being detected as keywords in other places */
 	readonly dashOnlyKeywords = new Set<string>([
-		'namespace', 'template', 'block', 'return', 'eval', 'head', 'with', 'else',
+		'namespace', 'template', 'block', 'return', 'eval', 'head', 'with', 'else', 'switch',
 		'for', 'break', 'continue', 'forEach', 'forIn', 'try', 'throw', 'catch', 'finally', 'doctype',
 		'include', 'import', 'target', 'super',
 	]);
@@ -138,12 +138,12 @@ export class SnakeskinTokenBuilder extends IndentationAwareTokenBuilder<Terminal
 		} else if (tokenType.name === 'EXPR_TILL_EOL') {
 			tokenType.PATTERN = (text, offset, tokens, groups) => {
 				// The " |" part is to support single line attribute values as well
-				const originalRegex = /(?<=\s(return|\+?=|if|for|throw|unless|- target|\?)\s).+?(?=$|\s+\|\s+)/my;
+				const originalRegex = /(?<=\s(return|\+?=|if|switch|for|throw|unless|- target|\?|>|<!)\s).+?(?=$|\s+\|\s+)/my;
 				originalRegex.lastIndex = offset;
 				const singleLineMatch =  originalRegex.exec(text);
 				if (singleLineMatch?.[0].endsWith('&')) {
 					// The value is multiline, so need to continue until consuming until " .\n"
-					const multilineRegex = /(?<=\s(return|\+?=|if|for|throw|unless|- target|\?) ).+?\s+\.$/smy;
+					const multilineRegex = /(?<=\s(return|\+?=|if|switch|for|throw|unless|- target|\?|<!) ).+?\s+\.$/smy;
 					multilineRegex.lastIndex = offset;
 					const multiLineMatch = multilineRegex.exec(text);
 					if (multiLineMatch == null) {

@@ -38,6 +38,7 @@ Directive:
     ElseUnless |
     Unless |
     Else |
+    Switch |
 
     For |
     // While |
@@ -254,8 +255,18 @@ Unless:
     // else=Else?
 ;
 
-// TODO: switch
+Case:
+    '>' expr=EXPR_TILL_EOL
+    Body
+;
 
+Switch:
+    '-' 'switch'
+    expr=EXPR_TILL_EOL
+    INDENT
+    cases+=Case+
+    DEDENT
+;
 
 // ---------- VII. Loops ----------
 
