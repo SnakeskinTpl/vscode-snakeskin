@@ -1,7 +1,8 @@
+import { basename, dirname } from 'node:path';
 import type { Hover, HoverParams } from 'vscode-languageserver';
 import { AstNode, LangiumDocument, MaybePromise, CstUtils } from 'langium';
 import { AstNodeHoverProvider } from 'langium/lsp';
-import { isAttribute, isTag } from './generated/ast.js';
+import { isAttribute, isReferencePath, isTag } from './generated/ast.js';
 import { getDefaultHTMLDataProvider } from 'vscode-html-languageservice/lib/esm/htmlLanguageService.js';
 // @ts-ignore - this function is not exported in the types, for some reason
 import { generateDocumentation } from 'vscode-html-languageservice/lib/esm/languageFacts/dataProvider.js';
@@ -63,6 +64,14 @@ export class HoverProvider extends AstNodeHoverProvider {
             const attr = attrs.find(attr => normalizedKey === attr.name.toLowerCase());
             if (attr) {
                 return {contents: generateDocumentation(attr, undefined, true), range};
+            }
+        } else if (isReferencePath(node)) {
+            const uri = node.$cstNode?.root.astNode.$document?.textDocument.uri;
+            if (uri == undefined) return;
+            if (node.name === '%fileName%') {
+                return {contents: basename(uri, '.ss'), range};
+            } else if (node.name === '%dirName%') {
+                return {contents: basename(dirname(uri)), range};
             }
         }
         return undefined;
